@@ -53,7 +53,7 @@ section { padding-block: 56px; border-top: 1px solid var(--line); display: grid;
 
 /* ---------- hero ---------- */
 .hero { padding-block: 56px 32px; display: grid; gap: 18px; }
-.hero h1 { font-size: clamp(1.85rem, 1.25rem + 2.4vw, 3.15rem); font-weight: 700; max-width: 26ch; }
+.hero h1 { font-size: clamp(1.85rem, 1.25rem + 2.4vw, 3.15rem); font-weight: 700; }
 .hero .sub { font-family: var(--f-display); font-size: clamp(1.05rem, 0.98rem + 0.4vw, 1.28rem); line-height: 1.5; color: var(--muted); max-width: 66ch; }
 .hero .sub b { color: var(--ours); }
 .authors { display: flex; flex-wrap: wrap; gap: 4px 26px; font: 600 1.08rem/1.4 var(--f-display); }
@@ -137,7 +137,7 @@ footer { padding-block: 32px 56px; color: var(--muted); font-size: 0.88rem; bord
   <header class="hero">
     <div class="eyebrow">Crowd simulation · pedestrian attributes · robot navigation · 2026</div>
     <h1>Attribute-Aware Crowd Generation</h1>
-    <p class="sub"><b>ACG</b> is the first crowd generation pipeline that models who appears in a scene and how their attributes shape the way they move: children walk slower and closer to others, phone users stop longer, personal-mobility riders go faster. It is trained on <b>CAT</b>, a new crowd trajectory dataset with world-coordinate tracks, scene semantic maps and pedestrian attribute annotations.</p>
+    <p class="sub"><b>ACG</b> generates crowds whose composition follows the scene and whose motion follows each pedestrian's attributes: children walk slower and closer to others, phone users stop longer, personal-mobility riders go faster. It is trained on <b>CAT</b>, a new crowd trajectory dataset with attribute annotations.</p>
     <div class="authors">
       <a href="https://jungyu0413.github.io/" target="_blank" rel="noopener">JunGyu Lee<sup>1,*</sup></a>
       <a href="https://chaemin-hwang.github.io/" target="_blank" rel="noopener">Chaemin Hwang<sup>1,*</sup></a>
@@ -157,21 +157,21 @@ footer { padding-block: 32px 56px; color: var(--muted); font-size: 0.88rem; bord
     <div class="vbox">
       <video id="hero" src="n/hero.mp4" poster="n/hero.jpg" autoplay muted loop playsinline preload="metadata"></video>
     </div>
-    <p class="cap"><b>ACG in 27 seconds.</b> A crowd generated for the OCT Harbour scene, each pedestrian emitted with attributes sampled from the scene map (half speed); real and generated crowds at a school entrance; personal-mobility riders and children moving at their own pace; delivery robots trained on CrowdES or ACG crowds; and the three parts of the work. Crowds are rendered in CARLA; characters and walking animations are not part of this work.</p>
+    <p class="cap"><b>ACG in 27 seconds.</b> A generated OCT Harbour crowd with its attribute labels (half speed), real vs. generated crowds at a school entrance, riders and children at their own pace, and delivery robots trained on CrowdES or ACG crowds. Rendered in CARLA; characters and animations are not part of this work.</p>
   </div>
 
   <section id="abstract">
     <div class="intro">
-      <div class="head"><div class="eyebrow">Abstract</div><h2>Crowds differ from place to place, and behaviour differs from person to person</h2></div>
+      <div class="head"><div class="eyebrow">Abstract</div><h2>Crowds that differ by place and by person</h2></div>
       <div class="prose abstract-text">
         <p>Crowds differ from place to place, and behavior differs from person to person. For example, children often walk with their parents around schools, while phone users tend to pay less attention to their surroundings. Capturing this diversity is essential for realistic crowd simulation. However, since datasets that provide both scene maps and pedestrian attribute annotations remain limited, existing crowd generation models do not explicitly learn attribute-dependent patterns. In this paper, we introduce an <b>attribute-aware crowd generation pipeline</b>. To do this, we first construct a crowd trajectory dataset with world-coordinate trajectories, scene semantic maps, and annotations for pedestrian attributes selected based on social studies. Building on this dataset, we propose a framework that models how attribute distributions vary across scenes and how these attributes form agents' motion patterns. Here, we incorporate two attention mechanisms: a scene cross-attention for predicting attributes from agent origins and scene maps, and an attribute-aware social attention for capturing the relative influence of each neighbor based on both agents' attributes and their relative positions. Extensive experiments demonstrate that our model outperforms baselines on public datasets as well as our attribute-annotated dataset. As an application, robot navigation policies trained on our generated crowds achieve lower collision rates while maintaining comparable success rates. To the best of our knowledge, our pipeline is the first attempt to enable attribute-aware crowd generation.</p>
       </div>
     </div>
     <div class="kpis">
-      <div class="kpi"><b>4,048</b><span>pedestrians in CAT, six scenes, four attribute groups, 378,400 world-coordinate observations</span></div>
-      <div class="kpi"><b>7 / 8</b><span>metrics best or tied-best on CAT (vs. SE-ORCA, VAE, TRACE, CrowdES); frequency, kinematics and DTW errors cut by 29–44% over CrowdES</span></div>
+      <div class="kpi"><b>4,048</b><span>pedestrians in CAT across six scenes and four attribute groups</span></div>
+      <div class="kpi"><b>7 / 8</b><span>metrics best or tied-best on CAT; frequency, kinematics and DTW errors 29–44% below CrowdES</span></div>
       <div class="kpi"><b>1.81 ms</b><span>per agent-step, the fastest of the compared generators and 54× faster than TRACE</span></div>
-      <div class="kpi"><b>4 / 4</b><span>navigation policies collide less when trained on ACG crowds; 83–92% of user-study votes prefer ACG</span></div>
+      <div class="kpi"><b>4 / 4</b><span>navigation policies collide less when trained on ACG crowds; 83–92% user preference</span></div>
     </div>
   </section>
 
@@ -179,18 +179,18 @@ footer { padding-block: 32px 56px; color: var(--muted); font-size: 0.88rem; bord
     <div class="intro">
       <div class="head"><div class="eyebrow">CAT dataset</div><h2>Who is in the crowd, and where</h2></div>
       <div class="prose">
-        <p>CAT (Crowd Attribute and Trajectory) is built from six gigapixel PANDA sequences: a university canteen, the OCT Harbour plaza, the Xili crossroad, a primary school, a university campus and the Huaqiangbei commercial street. Every pedestrian is annotated with four attribute groups chosen from studies of pedestrian behaviour: age (adult or child), mobility mode (on foot, personal mobility, dependent mobility), accompanying children and phone use. Scene-specific homographies lift the tracks to world coordinates, and eight-class semantic maps (building, structure, bush, grass, tree, sidewalk, road, crosswalk) describe each scene.</p>
+        <p>CAT (Crowd Attribute and Trajectory) is built from six gigapixel PANDA scenes: a university canteen, the OCT Harbour plaza, the Xili crossroad, a primary school, a university campus and the Huaqiangbei street. Every pedestrian carries four attribute groups chosen from studies of pedestrian behaviour: age, mobility mode, accompanying children and phone use. Homographies lift the tracks to world coordinates, and eight-class semantic maps describe each scene.</p>
       </div>
     </div>
     <div class="deck">
       <div class="vbox">
         <video src="n/cat.mp4" poster="n/cat.jpg" autoplay muted loop playsinline preload="metadata"></video>
       </div>
-      <p class="cap"><b>Building CAT.</b> Pedestrian tracks from the gigapixel video, attribute labels reviewed across frames, image-to-world mapping on the ground plane, and the six scenes recreated in simulation for the experiments below.</p>
+      <p class="cap"><b>Building CAT.</b> Pedestrian tracks from the gigapixel video, attribute labels reviewed frame by frame, image-to-world mapping, and the six scenes recreated in simulation.</p>
     </div>
     <figure class="paperfig">
       <a class="frame" href="figs/dataset.png" target="_blank" rel="noopener"><img src="figs/dataset.png" alt="CAT construction pipeline: raw PANDA data, attribute annotation with candidate screening and manual review, homography estimation, semantic annotation, and the final dataset" width="2040" height="589" loading="lazy"></a>
-      <figcaption>Raw data provide pedestrian tracks and visual cues. Candidate pedestrians are screened automatically and every label is reviewed by hand in a web tool. Homographies estimated from ground reference points map image coordinates to metres, and Grounded-SAM plus manual labelling give the scene semantic maps.</figcaption>
+      <figcaption>Tracks and visual cues from PANDA, automatic screening plus manual review of every label, homographies from ground reference points, and semantic maps from Grounded-SAM with manual labelling.</figcaption>
     </figure>
     <div class="tables">
       <div class="tscroll"><table>
@@ -203,7 +203,7 @@ footer { padding-block: 32px 56px; color: var(--muted); font-size: 0.88rem; bord
 <tr><td>Neighbour distance (m)</td><td>1.12 [0.72, 1.85]</td><td>0.59 [0.44, 1.04]</td><td>1.99 [1.26, 3.26]</td><td>0.67 [0.51, 1.09]</td><td>1.70 [1.05, 2.29]</td></tr>
 <tr><td>Companion rate (%)</td><td>37</td><td>62</td><td>12</td><td>63</td><td>22</td></tr>
 </tbody></table></div>
-      <p class="tnote">Speed and acceleration: mean ± standard deviation; stop time and neighbour distance: median [Q1, Q3]. Children walk more slowly and closer to others than adults, personal-mobility riders are fast and keep their distance, phone users stop for twice as long and walk alone more often. These differences hold scene by scene, and ACG is built to reproduce them.</p>
+      <p class="tnote">Mean ± standard deviation for speed and acceleration; median [Q1, Q3] for stop time and neighbour distance. Children walk slower and closer to others, riders are fast and keep their distance, phone users stop twice as long.</p>
     </div>
   </section>
 
@@ -211,12 +211,12 @@ footer { padding-block: 32px 56px; color: var(--muted); font-size: 0.88rem; bord
     <div class="intro">
       <div class="head"><div class="eyebrow">Method</div><h2>Attributes decide where agents start, where they go and how they move</h2></div>
       <div class="prose">
-        <p>A shared U-Net encoder turns the semantic map, the traversable mask and position heatmaps into global and spatial scene features used by two modules. <b>Agent emission</b> samples each agent's origin from a scene-conditioned origin map, then a <b>scene cross-attention</b> predicts the four attribute distributions from the local feature at that origin and the global scene tokens; the sampled attributes modulate the goal head through FiLM. <b>Motion generation</b> predicts the next displacement autoregressively. Its <b>attribute-aware social attention</b> adds a learned bias B<sub>ij</sub> = ϕ<sub>rel</sub>(r<sub>ij</sub>) + ϕ<sub>pair</sub>(e<sub>i</sub>, e<sub>j</sub>, r<sub>ij</sub>) to the query–key scores, so two agents at the same relative position can attend to each other differently depending on who they are, and the attribute embedding scales the displacement. Both modules are trained jointly with cross-entropy for origins, goals and attributes, a trajectory loss, and a behaviour-matching loss that uses an attribute-conditioned discriminator, per-attribute speed quantiles and nearest-neighbour spacing.</p>
+        <p>A shared U-Net encoder turns the semantic map, the traversable mask and position heatmaps into scene features for two modules. <b>Agent emission</b> samples an origin from a scene-conditioned origin map, and a <b>scene cross-attention</b> predicts the four attribute distributions at that origin; the sampled attributes modulate the goal head. <b>Motion generation</b> predicts the next displacement step by step, with an <b>attribute-aware social attention</b> whose bias B<sub>ij</sub> = ϕ<sub>rel</sub>(r<sub>ij</sub>) + ϕ<sub>pair</sub>(e<sub>i</sub>, e<sub>j</sub>, r<sub>ij</sub>) lets two agents at the same relative position attend to each other differently depending on who they are. Both modules are trained jointly with cross-entropy, trajectory and behaviour-matching losses.</p>
       </div>
     </div>
     <figure class="paperfig">
       <a class="frame" href="figs/overview.png" target="_blank" rel="noopener"><img src="figs/overview.png" alt="Overview of ACG: input scene, agent emission with origin head, scene cross-attention and goal head, motion generation with attribute-aware social attention and motion head, and the generated trajectories" width="2049" height="411"></a>
-      <figcaption>A shared U-Net encoder provides scene features to both agent emission and crowd motion. Scene cross-attention predicts attribute distributions from agent origins and scene context; attribute-aware social attention models interactions from attribute pairs and relative positions. The sampled attributes condition goal generation and displacement prediction.</figcaption>
+      <figcaption>Scene cross-attention predicts attribute distributions from agent origins and scene context; attribute-aware social attention models interactions from attribute pairs and relative positions. The sampled attributes condition goal generation and displacement prediction.</figcaption>
     </figure>
   </section>
 
@@ -224,7 +224,7 @@ footer { padding-block: 32px 56px; color: var(--muted); font-size: 0.88rem; bord
     <div class="intro">
       <div class="head"><div class="eyebrow">Results · generated crowds</div><h2>The right people in the right place, moving the right way</h2></div>
       <div class="prose">
-        <p>Crowds generated for the CAT scenes and rendered in CARLA. The first group compares the attribute mix of a real crowd with an ACG crowd generated from the scene map alone; the second compares how CrowdES and ACG move one pedestrian group, against the value measured in CAT. Rendering quality and walking animations are outside the scope of the comparison.</p>
+        <p>Crowds generated for the CAT scenes, rendered in CARLA. The first group compares the attribute mix of a real crowd with an ACG crowd generated from the scene map alone; the second compares how CrowdES and ACG move one pedestrian group against the value measured in CAT.</p>
       </div>
     </div>
     <div class="deck">
@@ -244,14 +244,14 @@ footer { padding-block: 32px 56px; color: var(--muted); font-size: 0.88rem; bord
     <div class="intro">
       <div class="head"><div class="eyebrow">Results · robot navigation</div><h2>Robots trained in ACG crowds are safer</h2></div>
       <div class="prose">
-        <p>SARL, RGL, LSTM-RL and CrowdNav++ are trained on crowds generated by either CrowdES or ACG, then evaluated on both generators' crowds in unseen CAT scenes. Training on ACG crowds lowers the collision rate of all four policies under both evaluation crowds, while success rates stay comparable or improve.</p>
+        <p>SARL, RGL, LSTM-RL and CrowdNav++ are trained on CrowdES or ACG crowds and evaluated on both in unseen CAT scenes. Training on ACG crowds lowers the collision rate of all four policies, with comparable or better success rates.</p>
       </div>
     </div>
     <div class="deck">
       <div class="vbox rb">
         <video src="n/robot.mp4" poster="n/robot.jpg" autoplay muted loop playsinline preload="metadata"></video>
       </div>
-      <p class="cap"><b>Three delivery episodes, two training crowds.</b> Same scenes and goals; the policy trained on CrowdES crowds (top) collides with a child in the middle episode, the policy trained on ACG crowds (bottom) detours and keeps a larger distance to every pedestrian. Played at 1.5× speed.</p>
+      <p class="cap"><b>Three delivery episodes, two training crowds.</b> The policy trained on CrowdES crowds (top) collides with a child in the middle episode; the policy trained on ACG crowds (bottom) detours and keeps more distance. 1.5× speed.</p>
     </div>
     <div class="tables">
       <div class="tscroll"><table>
@@ -267,7 +267,7 @@ footer { padding-block: 32px 56px; color: var(--muted); font-size: 0.88rem; bord
 <tr><td>CrowdNav++</td><td>CrowdES</td><td class="b">0.611</td><td>0.090</td><td class="b">0.491</td><td>0.245</td></tr>
 <tr class="ours"><td></td><td>ACG (ours)</td><td>0.553</td><td class="b">0.064</td><td>0.485</td><td class="b">0.157</td></tr>
 </tbody></table></div>
-      <p class="tnote">Success: episodes in which the robot reaches its goal without a collision; collision: episodes with a robot–pedestrian collision. Bold marks the better value within each policy. Training RGL on ACG crowds cuts its collision rate from 5.1% to 2.1% and raises its success rate from 93.8% to 96.6% on CrowdES crowds.</p>
+      <p class="tnote">Success: the robot reaches its goal without a collision; collision: episodes with a robot–pedestrian collision. Bold: the better value within each policy. RGL trained on ACG crowds drops from 5.1% to 2.1% collisions on CrowdES crowds.</p>
     </div>
   </section>
 
@@ -304,7 +304,7 @@ footer { padding-block: 32px 56px; color: var(--muted); font-size: 0.88rem; bord
 <tr><td>CrowdES</td><td class="u">0.332</td><td class="u">0.121</td><td class="u">0.121</td><td class="u">0.768</td><td>1.192</td><td>5.064</td><td>0.316</td><td>10.279</td></tr>
 <tr class="ours"><td>ACG (ours)</td><td class="b">0.328</td><td class="b">0.115</td><td class="b">0.115</td><td class="b">0.757</td><td class="b">0.393</td><td class="u">2.825</td><td class="u">0.320</td><td class="u">2.672</td></tr>
 </tbody></table></div>
-      <p class="tnote">Scene-level realism (density, frequency, coverage, population) and agent-level similarity (kinematics, DTW, diversity, collision rate) following CrowdES; lower is better except diversity. CAT is evaluated with two-fold temporal cross-validation on six scenes; ETH/UCY is averaged over five scenes; † marks reimplemented baselines, and GCS uses a common test split built for this study. Best and second-best per column are bold and underlined.</p>
+      <p class="tnote">Scene-level realism (density, frequency, coverage, population) and agent-level similarity (kinematics, DTW, diversity, collision rate) following CrowdES; lower is better except diversity. † reimplemented baselines; GCS uses a common test split built for this study. Bold: best, underline: second best.</p>
     </div>
     <div class="tables">
       <div class="tscroll"><table>
@@ -318,7 +318,7 @@ footer { padding-block: 32px 56px; color: var(--muted); font-size: 0.88rem; bord
 <tr><td>Accompanying children</td><td class="real">0.099</td><td>0.022</td><td class="b">0.057</td><td class="real">0.62</td><td>0.90</td><td class="b">0.82</td></tr>
 <tr><td>Phone use</td><td class="real">0.119</td><td>0.092</td><td class="b">0.125</td><td class="real">0.83</td><td>1.22</td><td class="b">1.15</td></tr>
 </tbody></table></div>
-      <p class="tnote">Proportions and mean speeds pooled over the twelve CAT evaluations. Bold marks the smaller absolute error against the real crowd; ACG is closer in all twelve comparisons. CrowdES moves personal-mobility riders at 0.39 m/s, ACG at 2.06 m/s against 2.23 m/s in the data. Removing the scene cross-attention raises the frequency error from 0.064 to 0.079; removing the social attention raises the kinematic error and DTW (Table 6 of the paper).</p>
+      <p class="tnote">Proportions and mean speeds pooled over the twelve CAT evaluations; bold marks the smaller error against the real crowd. ACG is closer in all twelve comparisons.</p>
     </div>
   </section>
 
@@ -330,7 +330,7 @@ footer { padding-block: 32px 56px; color: var(--muted); font-size: 0.88rem; bord
       <div class="vbox">
         <video id="full" src="n/demo.mp4" poster="n/demo.jpg" controls playsinline preload="none"></video>
       </div>
-      <p class="cap"><b>1 min 19 s.</b> Building CAT, scene-specific crowd composition, motion by pedestrian attribute, and robot navigation policies trained on generated crowds. ACG generates attributes and trajectories only; characters, walking animations and body poses are not part of this work.</p>
+      <p class="cap"><b>1 min 19 s.</b> Building CAT, scene-specific crowd composition, motion by attribute, and robot navigation on generated crowds.</p>
     </div>
   </section>
 
@@ -386,9 +386,9 @@ footer { padding-block: 32px 56px; color: var(--muted); font-size: 0.88rem; bord
 
   player('#p1', [
     { id: 'cmp', name: 'Crowd composition', note: 'real crowd vs. ACG crowd', cls: 'cmp', scenes: [
-      { v: 'cmp_school', s: 'Children walk with adults near the school entrance', c: 'Primary School. The bars give the attribute shares of each crowd: children make up 55% of the real crowd and 57% of the ACG crowd, adults accompanying a child 22% and 19%.' },
+      { v: 'cmp_school', s: 'Children walk with adults near the school entrance', c: 'Primary School. Children are 55% of the real crowd and 57% of the ACG crowd; adults accompanying a child 22% and 19%.' },
       { v: 'cmp_plaza', s: 'A diverse crowd gathers in the plaza', c: 'OCT Harbour. Adults, children, families, personal-mobility riders and phone users mix in the plaza, and ACG reproduces the mix from the scene map alone.' },
-      { v: 'cmp_canteen', s: 'Adults dominate the canteen crowd', c: 'University Canteen. The real crowd is mostly adults with some phone users and riders and no children, and so is the generated one.' } ] },
+      { v: 'cmp_canteen', s: 'Adults dominate the canteen crowd', c: 'University Canteen. Mostly adults with some phone users and riders and no children, in both the real and the generated crowd.' } ] },
     { id: 'mot', name: 'Motion by attribute', note: 'CrowdES vs. ACG', cls: 'mot', scenes: [
       { v: 'mot_pm', s: 'Personal mobility', c: 'Xili Crossroad. CrowdES moves the rider at walking pace (0.9 m/s); ACG rides at 2.6 m/s, close to the 2.85 m/s measured in CAT.' },
       { v: 'mot_child', s: 'Children', c: 'Primary School. ACG children walk about 20% slower than the adults around them (16% slower in CAT); CrowdES keeps every age at the same pace.' },
