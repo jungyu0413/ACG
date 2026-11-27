@@ -23,7 +23,7 @@
 </p>
 
 <div align="center">
-  <br><img src="docs/figs/teaser.png" width="100%">
+  <br><img src="assets/teaser.png" width="100%">
   <br><em>People with different attributes move and interact in different ways. ACG is the first attempt to simulate pedestrians' motions and interactions according to their attributes such as age, accompanying children, and phone use.</em>
 </div>
 
@@ -52,7 +52,7 @@ generation.
 ## 🧭 Method
 
 <div align="center">
-  <img src="docs/figs/overview.png" width="100%">
+  <img src="assets/overview.png" width="100%">
   <br><em>A shared U-Net encoder provides scene features to both agent emission and crowd motion. Scene cross-attention predicts attribute distributions from agent origins and scene context. Attribute-aware social attention models interactions based on attribute pairs and relative positions. The sampled attributes condition goal generation and displacement prediction.</em>
 </div>
 
@@ -263,9 +263,11 @@ ACG/
 │   ├── geometry.py        # homographies, scene rasters, heatmaps
 │   ├── attributes.py      # attribute codes and one-hot groups
 │   └── metrics.py         # CrowdES metrics (MIT)
-├── scripts/               # prepare_data, train, generate, make_table, attribute_stats
+├── scripts/               # prepare_data → train → generate → make_table, attribute_stats
 ├── tools/                 # import_crowdes, build_panda_benchmark, export_population_prior, build_entry_prior
 ├── data/                  # scenes, folds and priors (data/README.md)
+├── weights/               # checkpoints (weights/README.md)
+├── assets/                # README figures
 └── docs/                  # project page
 ```
 

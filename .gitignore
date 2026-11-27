@@ -1,6 +1,7 @@
 __pycache__/
 *.pyc
-weights/
+weights/*
+!weights/README.md
 outputs/
 data/priors/*/
 !data/priors/population/
