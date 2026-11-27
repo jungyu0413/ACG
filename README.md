@@ -2,7 +2,7 @@
 
 **[Project page](https://jungyu0413.github.io/ACG/)** · [Video](https://jungyu0413.github.io/ACG/#video)
 
-[JunGyu Lee](https://jungyu0413.github.io/)\*, Chaemin Hwang\*, [Jisu Shin](https://jsshin.com/), [Seunghyun Shin](https://www.seunghyunshin.com/), [Hae-Gon Jeon](https://scholar.google.com/citations?user=Ei00xroAAAAJ&hl=ko)
+[JunGyu Lee](https://jungyu0413.github.io/)\*, [Chaemin Hwang](https://chaemin-hwang.github.io/)\*, [Jisu Shin](https://jsshin.com/), [Seunghyun Shin](https://www.seunghyunshin.com/), [Hae-Gon Jeon](https://scholar.google.com/citations?user=Ei00xroAAAAJ&hl=ko)
 (\* equal contribution) · Yonsei University, GIST
 
 ![Attribute-aware crowd generation: people with different attributes move and interact in different ways](docs/figs/teaser.png)
