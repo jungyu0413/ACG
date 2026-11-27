@@ -1,0 +1,403 @@
+<!doctype html>
+<html lang="en">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>ACG Attribute-Aware Crowd Generation</title>
+<meta name="description" content="ACG: the first attribute-aware crowd generation pipeline, with the CAT dataset of world-coordinate pedestrian trajectories, scene semantic maps and attribute annotations.">
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Familjen+Grotesk:wght@500;600;700&family=Source+Serif+4:ital,opsz,wght@0,8..60,400;0,8..60,600;1,8..60,400&family=JetBrains+Mono:wght@400;600&display=swap">
+<style>
+/* Layout: one 1180px container. Each section opens with its heading in a narrow left column and its text on the
+   right (stacks below 960px). Clips cut from the demonstration video keep their own labels, so every media card is
+   white and the overlay tags are only used where a clip has none. Blue = ACG, red = baseline. Always light. */
+:root {
+  --bg: #f5f6f4;
+  --surface: #ffffff;
+  --ink: #16191d;
+  --muted: #5b626b;
+  --line: #d9ddd8;
+  --ours: #2a6fd1;
+  --base: #d23a33;
+  --accent: var(--ours);
+  --f-display: "Familjen Grotesk", "Helvetica Neue", Arial, sans-serif;
+  --f-body: "Source Serif 4", Georgia, "Times New Roman", serif;
+  --f-mono: "JetBrains Mono", ui-monospace, Menlo, Consolas, monospace;
+  --container: 1180px;
+  --measure: 68ch;
+}
+* { box-sizing: border-box; }
+body { background: var(--bg); color: var(--ink); font: 400 1.075rem/1.62 var(--f-body); margin: 0; }
+.page { max-width: var(--container); margin-inline: auto; padding-inline: 24px; }
+@media (max-width: 520px) { .page { padding-inline: 16px; } }
+.prose { max-width: var(--measure); display: grid; gap: 16px; min-width: 0; }
+.intro { display: grid; gap: 14px; }
+.intro .head { display: grid; gap: 12px; align-content: start; min-width: 0; }
+@media (min-width: 960px) {
+  .intro { grid-template-columns: minmax(0, 330px) minmax(0, 1fr); column-gap: 56px; }
+  .intro h2 { font-size: 1.85rem; }
+}
+h1, h2 { font-family: var(--f-display); text-wrap: balance; line-height: 1.12; margin: 0; letter-spacing: -0.01em; }
+h2 { font-size: clamp(1.5rem, 1.1rem + 1.4vw, 2.05rem); font-weight: 700; }
+p { margin: 0; text-wrap: pretty; }
+a { color: inherit; text-decoration-color: var(--accent); text-underline-offset: 3px; }
+:focus-visible { outline: 3px solid var(--accent); outline-offset: 2px; border-radius: 4px; }
+.eyebrow { font: 600 0.74rem/1 var(--f-mono); letter-spacing: 0.12em; text-transform: uppercase; color: var(--muted); }
+section { padding-block: 56px; border-top: 1px solid var(--line); display: grid; gap: 24px; }
+.abstract-text p { text-align: justify; hyphens: manual; }
+#abstract .intro, #results .intro, #video .intro { grid-template-columns: minmax(0, 1fr); }
+#abstract .prose.abstract-text { max-width: none; }
+#abstract .abstract-text p { font-size: 1.04rem; line-height: 1.72; }
+@media (max-width: 600px) { .abstract-text p { text-align: left; } }
+
+/* ---------- hero ---------- */
+.hero { padding-block: 56px 32px; display: grid; gap: 18px; }
+.hero h1 { font-size: clamp(1.85rem, 1.25rem + 2.4vw, 3.15rem); font-weight: 700; max-width: 26ch; }
+.hero .sub { font-family: var(--f-display); font-size: clamp(1.05rem, 0.98rem + 0.4vw, 1.28rem); line-height: 1.5; color: var(--muted); max-width: 66ch; }
+.hero .sub b { color: var(--ours); }
+.authors { display: flex; flex-wrap: wrap; gap: 4px 26px; font: 600 1.08rem/1.4 var(--f-display); }
+.authors a { text-decoration: none; border-bottom: 2px solid transparent; }
+.authors a:hover { border-bottom-color: var(--accent); }
+.authors sup, .affil sup { font: 600 0.72rem/1 var(--f-mono); color: var(--muted); margin-left: 2px; }
+.affil { display: flex; flex-wrap: wrap; gap: 4px 22px; color: var(--muted); font: 500 0.95rem/1.4 var(--f-display); }
+.links { display: flex; flex-wrap: wrap; gap: 10px; }
+.btn { display: inline-flex; align-items: center; gap: 8px; padding: 9px 16px; border-radius: 999px; border: 1px solid var(--line);
+  background: var(--surface); color: var(--ink); font: 600 0.9rem/1 var(--f-display); text-decoration: none; cursor: pointer; }
+.btn .dot { width: 8px; height: 8px; border-radius: 50%; background: var(--ours); }
+.btn.soon { color: var(--muted); cursor: default; }
+.btn.soon .dot { background: var(--line); }
+
+/* ---------- media cards ---------- */
+.deck { background: var(--surface); color: var(--ink); border: 1px solid var(--line); border-radius: 16px; padding: 14px; display: grid; gap: 10px; min-width: 0; }
+.vbox { position: relative; border-radius: 10px; overflow: hidden; background: #f1f3f1; }
+.vbox video { width: 100%; max-width: 100%; display: block; aspect-ratio: var(--ar, 16/9); height: auto; }
+.vbox .tag { position: absolute; top: 10px; font: 600 0.68rem/1 var(--f-mono); letter-spacing: 0.06em; text-transform: uppercase;
+  color: #fff; padding: 6px 9px; border-radius: 999px; pointer-events: none; max-width: 46%; white-space: nowrap; overflow: hidden; text-overflow: ellipsis; }
+.vbox .tag:empty { display: none; }
+.vbox .tag.l { left: 10px; background: rgba(22, 25, 29, .78); }
+.vbox .tag.r { background: rgba(42, 111, 209, .92); }
+.vbox .tag i { font-style: normal; }
+/* demonstration clips: two panels with a gap; the right panel starts at 50.9% of the 1786 px crops */
+.vbox.cmp video { aspect-ratio: 1786 / 660; }
+.vbox.mot video { aspect-ratio: 1786 / 730; }
+.vbox.rb video { aspect-ratio: 1830 / 750; }
+.vbox.cmp .tag.r, .vbox.mot .tag.r { left: calc(50.9% + 10px); }
+@media (max-width: 560px) { .vbox .tag i { display: none; } .vbox .tag { font-size: 0.58rem; padding: 4px 6px; top: 6px; } .vbox .tag.l { left: 6px; } .vbox.cmp .tag.r, .vbox.mot .tag.r { left: calc(50.9% + 6px); } }
+.cap { color: var(--muted); font: 400 0.84rem/1.55 var(--f-mono); padding: 0 4px; }
+.cap b { color: var(--ink); font-weight: 600; }
+
+/* ---------- player ---------- */
+.player { display: grid; gap: 18px; }
+.group { display: grid; gap: 8px; min-width: 0; }
+.group > .lab { font: 600 0.7rem/1 var(--f-mono); letter-spacing: 0.12em; text-transform: uppercase; color: var(--muted); }
+.seg { display: grid; grid-template-columns: repeat(var(--k, 3), minmax(0, 1fr)); gap: 6px; max-width: 640px; }
+.seg button { font: 600 0.84rem/1.1 var(--f-display); color: var(--ink); background: #f1f3f1; border: 1px solid var(--line); border-radius: 8px; padding: 10px 8px; cursor: pointer; min-width: 0; }
+.seg button[aria-pressed="true"] { background: var(--ink); color: #ffffff; border-color: var(--ink); }
+.seg button small { display: block; font: 500 0.68rem/1.2 var(--f-mono); opacity: .7; margin-top: 3px; }
+.scenes { display: grid; grid-template-columns: repeat(var(--n, 4), minmax(0, 1fr)); gap: 8px; }
+@media (max-width: 760px) { .scenes { grid-template-columns: repeat(3, minmax(0, 1fr)); } }
+.scenes button { padding: 0; border: 2px solid transparent; border-radius: 8px; background: none; cursor: pointer; overflow: hidden; text-align: left; color: var(--ink); min-width: 0; }
+.scenes button img { display: block; width: 100%; aspect-ratio: 16/9; object-fit: cover; }
+.scenes button span { display: block; font: 600 0.7rem/1.2 var(--f-mono); padding: 6px 7px; background: #f1f3f1; white-space: nowrap; overflow: hidden; text-overflow: ellipsis; }
+.scenes button[aria-pressed="true"] { border-color: var(--ours); }
+
+/* ---------- paper figure ---------- */
+.paperfig { margin: 0; display: grid; gap: 12px; min-width: 0; }
+.paperfig .frame { display: block; background: #ffffff; border: 1px solid var(--line); border-radius: 14px; padding: clamp(10px, 2vw, 22px); overflow-x: auto; }
+.paperfig img { display: block; width: 100%; height: auto; }
+.paperfig figcaption { color: var(--muted); font-size: 0.95rem; max-width: 100ch; }
+
+/* ---------- results ---------- */
+.kpis { display: grid; grid-template-columns: repeat(4, minmax(0, 1fr)); gap: 18px; }
+@media (max-width: 760px) { .kpis { grid-template-columns: repeat(2, minmax(0, 1fr)); } }
+.kpi { border-left: 3px solid var(--ours); padding: 2px 0 2px 14px; display: grid; gap: 4px; min-width: 0; }
+.kpi b { font: 700 clamp(1.2rem, 0.95rem + 1vw, 1.6rem)/1.15 var(--f-display); font-variant-numeric: tabular-nums; white-space: nowrap; }
+.kpi span { font-size: 0.9rem; color: var(--muted); }
+.tscroll { overflow-x: auto; border: 1px solid var(--line); border-radius: 12px; background: var(--surface); }
+table { border-collapse: collapse; width: 100%; font: 400 0.86rem/1.3 var(--f-mono); font-variant-numeric: tabular-nums; min-width: 720px; }
+th, td { padding: 9px 13px; text-align: right; border-bottom: 1px solid var(--line); white-space: nowrap; }
+th:first-child, td:first-child { text-align: left; font-family: var(--f-display); font-weight: 600; }
+thead th { font: 600 0.7rem/1 var(--f-mono); letter-spacing: 0.08em; text-transform: uppercase; color: var(--muted); }
+thead th.c { text-align: center; }
+tr.grp td { font: 600 0.7rem/1 var(--f-mono); letter-spacing: 0.1em; text-transform: uppercase; color: var(--muted); background: var(--bg); text-align: left; }
+tr.ours td { color: var(--ours); }
+tr.ours td:first-child { font-weight: 700; }
+td.b { font-weight: 700; }
+td.u { text-decoration: underline; text-underline-offset: 3px; }
+td.real { color: var(--muted); }
+tbody tr:last-child td { border-bottom: 0; }
+.tnote { color: var(--muted); font-size: 0.92rem; max-width: 100ch; }
+.tables { display: grid; gap: 14px; }
+
+footer { padding-block: 32px 56px; color: var(--muted); font-size: 0.88rem; border-top: 1px solid var(--line); display: grid; gap: 8px; }
+</style>
+
+<div class="page">
+  <header class="hero">
+    <div class="eyebrow">Crowd simulation · pedestrian attributes · robot navigation · 2026</div>
+    <h1>Attribute-Aware Crowd Generation</h1>
+    <p class="sub"><b>ACG</b> is the first crowd generation pipeline that models who appears in a scene and how their attributes shape the way they move: children walk slower and closer to others, phone users stop longer, personal-mobility riders go faster. It is trained on <b>CAT</b>, a new crowd trajectory dataset with world-coordinate tracks, scene semantic maps and pedestrian attribute annotations.</p>
+    <div class="authors">
+      <a href="https://jungyu0413.github.io/" target="_blank" rel="noopener">JunGyu Lee<sup>1,*</sup></a>
+      <span>Chaemin Hwang<sup>1,*</sup></span>
+      <a href="https://jsshin.com/" target="_blank" rel="noopener">Jisu Shin<sup>2</sup></a>
+      <a href="https://www.seunghyunshin.com/" target="_blank" rel="noopener">Seunghyun Shin<sup>2</sup></a>
+      <a href="https://scholar.google.com/citations?user=Ei00xroAAAAJ&amp;hl=ko" target="_blank" rel="noopener">Hae-Gon Jeon<sup>1</sup></a>
+    </div>
+    <div class="affil"><span><sup>1</sup>Yonsei University</span><span><sup>2</sup>GIST</span><span><sup>*</sup>Equal contribution</span></div>
+    <div class="links">
+      <span class="btn soon" title="The preprint will be linked here once it is available"><span class="dot"></span>Paper · coming soon</span>
+      <a class="btn" href="https://github.com/jungyu0413/ACG" target="_blank" rel="noopener">Code</a>
+      <a class="btn" href="#video">Video</a>
+    </div>
+  </header>
+
+  <div class="deck">
+    <div class="vbox">
+      <video id="hero" src="n/hero.mp4" poster="n/hero.jpg" autoplay muted loop playsinline preload="metadata"></video>
+    </div>
+    <p class="cap"><b>A crowd generated by ACG for the OCT Harbour scene, rendered in CARLA.</b> Each pedestrian is emitted with attributes sampled from the scene map, so phone users, adults accompanying children, children and personal-mobility riders appear where they do in the real crowd and then move the way their attributes dictate. Played at half speed.</p>
+  </div>
+
+  <section id="abstract">
+    <div class="intro">
+      <div class="head"><div class="eyebrow">Abstract</div><h2>Crowds differ from place to place, and behaviour differs from person to person</h2></div>
+      <div class="prose abstract-text">
+        <p>Crowds differ from place to place, and behavior differs from person to person. For example, children often walk with their parents around schools, while phone users tend to pay less attention to their surroundings. Capturing this diversity is essential for realistic crowd simulation. However, since datasets that provide both scene maps and pedestrian attribute annotations remain limited, existing crowd generation models do not explicitly learn attribute-dependent patterns. In this paper, we introduce an <b>attribute-aware crowd generation pipeline</b>. To do this, we first construct a crowd trajectory dataset with world-coordinate trajectories, scene semantic maps, and annotations for pedestrian attributes selected based on social studies. Building on this dataset, we propose a framework that models how attribute distributions vary across scenes and how these attributes form agents' motion patterns. Here, we incorporate two attention mechanisms: a scene cross-attention for predicting attributes from agent origins and scene maps, and an attribute-aware social attention for capturing the relative influence of each neighbor based on both agents' attributes and their relative positions. Extensive experiments demonstrate that our model outperforms baselines on public datasets as well as our attribute-annotated dataset. As an application, robot navigation policies trained on our generated crowds achieve lower collision rates while maintaining comparable success rates. To the best of our knowledge, our pipeline is the first attempt to enable attribute-aware crowd generation.</p>
+      </div>
+    </div>
+    <div class="kpis">
+      <div class="kpi"><b>4,048</b><span>pedestrians in CAT, six scenes, four attribute groups, 378,400 world-coordinate observations</span></div>
+      <div class="kpi"><b>7 / 8</b><span>metrics best or tied-best on CAT (vs. SE-ORCA, VAE, TRACE, CrowdES); frequency, kinematics and DTW errors cut by 29–44% over CrowdES</span></div>
+      <div class="kpi"><b>1.81 ms</b><span>per agent-step, the fastest of the compared generators and 54× faster than TRACE</span></div>
+      <div class="kpi"><b>4 / 4</b><span>navigation policies collide less when trained on ACG crowds; 83–92% of user-study votes prefer ACG</span></div>
+    </div>
+  </section>
+
+  <section id="dataset">
+    <div class="intro">
+      <div class="head"><div class="eyebrow">CAT dataset</div><h2>Who is in the crowd, and where</h2></div>
+      <div class="prose">
+        <p>CAT (Crowd Attribute and Trajectory) is built from six gigapixel PANDA sequences: a university canteen, the OCT Harbour plaza, the Xili crossroad, a primary school, a university campus and the Huaqiangbei commercial street. Every pedestrian is annotated with four attribute groups chosen from studies of pedestrian behaviour: age (adult or child), mobility mode (on foot, personal mobility, dependent mobility), accompanying children and phone use. Scene-specific homographies lift the tracks to world coordinates, and eight-class semantic maps (building, structure, bush, grass, tree, sidewalk, road, crosswalk) describe each scene.</p>
+      </div>
+    </div>
+    <div class="deck">
+      <div class="vbox">
+        <video src="n/cat.mp4" poster="n/cat.jpg" autoplay muted loop playsinline preload="metadata"></video>
+      </div>
+      <p class="cap"><b>Building CAT.</b> Pedestrian tracks from the gigapixel video, attribute labels reviewed across frames, image-to-world mapping on the ground plane, and the six scenes recreated in simulation for the experiments below.</p>
+    </div>
+    <figure class="paperfig">
+      <a class="frame" href="figs/dataset.png" target="_blank" rel="noopener"><img src="figs/dataset.png" alt="CAT construction pipeline: raw PANDA data, attribute annotation with candidate screening and manual review, homography estimation, semantic annotation, and the final dataset" width="2040" height="589" loading="lazy"></a>
+      <figcaption>Raw data provide pedestrian tracks and visual cues. Candidate pedestrians are screened automatically and every label is reviewed by hand in a web tool. Homographies estimated from ground reference points map image coordinates to metres, and Grounded-SAM plus manual labelling give the scene semantic maps.</figcaption>
+    </figure>
+    <div class="tables">
+      <div class="tscroll"><table>
+<thead><tr><th>Attribute-level statistics in CAT</th><th>Adult, on foot</th><th>Child</th><th>Personal mobility</th><th>Accompanying a child</th><th>Phone use</th></tr></thead>
+<tbody>
+<tr><td>Pedestrians</td><td>2,477</td><td>530</td><td>168</td><td>303</td><td>403</td></tr>
+<tr><td>Speed (m/s)</td><td>1.09 ± 0.34</td><td>0.90 ± 0.30</td><td>2.85 ± 1.30</td><td>0.87 ± 0.26</td><td>1.05 ± 0.40</td></tr>
+<tr><td>Acceleration (m/s²)</td><td>0.34 ± 0.26</td><td>0.24 ± 0.16</td><td>0.58 ± 0.36</td><td>0.22 ± 0.14</td><td>0.30 ± 0.22</td></tr>
+<tr><td>Stop time (s)</td><td>3.5 [2.3, 9.4]</td><td>5.5 [3.0, 13.9]</td><td>4.0 [2.5, 11.1]</td><td>5.0 [3.0, 13.5]</td><td>7.6 [3.0, 25.2]</td></tr>
+<tr><td>Neighbour distance (m)</td><td>1.12 [0.72, 1.85]</td><td>0.59 [0.44, 1.04]</td><td>1.99 [1.26, 3.26]</td><td>0.67 [0.51, 1.09]</td><td>1.70 [1.05, 2.29]</td></tr>
+<tr><td>Companion rate (%)</td><td>37</td><td>62</td><td>12</td><td>63</td><td>22</td></tr>
+</tbody></table></div>
+      <p class="tnote">Speed and acceleration: mean ± standard deviation; stop time and neighbour distance: median [Q1, Q3]. Children walk more slowly and closer to others than adults, personal-mobility riders are fast and keep their distance, phone users stop for twice as long and walk alone more often. These differences hold scene by scene, and ACG is built to reproduce them.</p>
+    </div>
+  </section>
+
+  <section id="method">
+    <div class="intro">
+      <div class="head"><div class="eyebrow">Method</div><h2>Attributes decide where agents start, where they go and how they move</h2></div>
+      <div class="prose">
+        <p>A shared U-Net encoder turns the semantic map, the traversable mask and position heatmaps into global and spatial scene features used by two modules. <b>Agent emission</b> samples each agent's origin from a scene-conditioned origin map, then a <b>scene cross-attention</b> predicts the four attribute distributions from the local feature at that origin and the global scene tokens; the sampled attributes modulate the goal head through FiLM. <b>Motion generation</b> predicts the next displacement autoregressively. Its <b>attribute-aware social attention</b> adds a learned bias B<sub>ij</sub> = ϕ<sub>rel</sub>(r<sub>ij</sub>) + ϕ<sub>pair</sub>(e<sub>i</sub>, e<sub>j</sub>, r<sub>ij</sub>) to the query–key scores, so two agents at the same relative position can attend to each other differently depending on who they are, and the attribute embedding scales the displacement. Both modules are trained jointly with cross-entropy for origins, goals and attributes, a trajectory loss, and a behaviour-matching loss that uses an attribute-conditioned discriminator, per-attribute speed quantiles and nearest-neighbour spacing.</p>
+      </div>
+    </div>
+    <figure class="paperfig">
+      <a class="frame" href="figs/overview.png" target="_blank" rel="noopener"><img src="figs/overview.png" alt="Overview of ACG: input scene, agent emission with origin head, scene cross-attention and goal head, motion generation with attribute-aware social attention and motion head, and the generated trajectories" width="2049" height="411"></a>
+      <figcaption>A shared U-Net encoder provides scene features to both agent emission and crowd motion. Scene cross-attention predicts attribute distributions from agent origins and scene context; attribute-aware social attention models interactions from attribute pairs and relative positions. The sampled attributes condition goal generation and displacement prediction.</figcaption>
+    </figure>
+  </section>
+
+  <section id="generation">
+    <div class="intro">
+      <div class="head"><div class="eyebrow">Results · generated crowds</div><h2>The right people in the right place, moving the right way</h2></div>
+      <div class="prose">
+        <p>Crowds generated for the CAT scenes and rendered in CARLA. The first group compares the attribute mix of a real crowd with an ACG crowd generated from the scene map alone; the second compares how CrowdES and ACG move one pedestrian group, against the value measured in CAT. Rendering quality and walking animations are outside the scope of the comparison.</p>
+      </div>
+    </div>
+    <div class="deck">
+      <div class="player" id="p1">
+        <div class="vbox cmp">
+          <video src="n/cmp_school.mp4" poster="n/cmp_school.jpg" autoplay muted loop playsinline preload="metadata"></video>
+          <span class="tag l"></span><span class="tag r"></span>
+        </div>
+        <div class="group"><div class="lab">Comparison</div><div class="seg" style="--k:2"></div></div>
+        <div class="group"><div class="lab">Scene</div><div class="scenes"></div></div>
+      </div>
+      <p class="cap"></p>
+    </div>
+  </section>
+
+  <section id="robot">
+    <div class="intro">
+      <div class="head"><div class="eyebrow">Results · robot navigation</div><h2>Robots trained in ACG crowds are safer</h2></div>
+      <div class="prose">
+        <p>SARL, RGL, LSTM-RL and CrowdNav++ are trained on crowds generated by either CrowdES or ACG, then evaluated on both generators' crowds in unseen CAT scenes. Training on ACG crowds lowers the collision rate of all four policies under both evaluation crowds, while success rates stay comparable or improve.</p>
+      </div>
+    </div>
+    <div class="deck">
+      <div class="vbox rb">
+        <video src="n/robot.mp4" poster="n/robot.jpg" autoplay muted loop playsinline preload="metadata"></video>
+      </div>
+      <p class="cap"><b>Three delivery episodes, two training crowds.</b> Same scenes and goals; the policy trained on CrowdES crowds (top) collides with a child in the middle episode, the policy trained on ACG crowds (bottom) detours and keeps a larger distance to every pedestrian. Played at 1.5× speed.</p>
+    </div>
+    <div class="tables">
+      <div class="tscroll"><table>
+<thead><tr><th>Navigation policy</th><th>Training crowd</th><th>Success ↑</th><th>Collision ↓</th><th>Success ↑</th><th>Collision ↓</th></tr>
+<tr><th></th><th></th><th colspan="2" class="c">Evaluated on CrowdES crowds</th><th colspan="2" class="c">Evaluated on ACG crowds</th></tr></thead>
+<tbody>
+<tr><td>SARL</td><td>CrowdES</td><td class="b">0.964</td><td>0.022</td><td>0.852</td><td>0.120</td></tr>
+<tr class="ours"><td></td><td>ACG (ours)</td><td>0.956</td><td class="b">0.018</td><td class="b">0.892</td><td class="b">0.074</td></tr>
+<tr><td>RGL</td><td>CrowdES</td><td>0.938</td><td>0.051</td><td>0.852</td><td>0.127</td></tr>
+<tr class="ours"><td></td><td>ACG (ours)</td><td class="b">0.966</td><td class="b">0.021</td><td class="b">0.908</td><td class="b">0.074</td></tr>
+<tr><td>LSTM-RL</td><td>CrowdES</td><td>0.967</td><td>0.024</td><td>0.865</td><td>0.113</td></tr>
+<tr class="ours"><td></td><td>ACG (ours)</td><td class="b">0.973</td><td class="b">0.017</td><td class="b">0.890</td><td class="b">0.092</td></tr>
+<tr><td>CrowdNav++</td><td>CrowdES</td><td class="b">0.611</td><td>0.090</td><td class="b">0.491</td><td>0.245</td></tr>
+<tr class="ours"><td></td><td>ACG (ours)</td><td>0.553</td><td class="b">0.064</td><td>0.485</td><td class="b">0.157</td></tr>
+</tbody></table></div>
+      <p class="tnote">Success: episodes in which the robot reaches its goal without a collision; collision: episodes with a robot–pedestrian collision. Bold marks the better value within each policy. Training RGL on ACG crowds cuts its collision rate from 5.1% to 2.1% and raises its success rate from 93.8% to 96.6% on CrowdES crowds.</p>
+    </div>
+  </section>
+
+  <section id="results">
+    <div class="intro">
+      <div class="head"><div class="eyebrow">Results</div><h2>Quantitative results</h2></div>
+    </div>
+    <div class="tables">
+      <div class="tscroll"><table>
+<thead><tr><th>Crowd generation</th><th>Dens.</th><th>Freq.</th><th>Cov.</th><th>Pop.</th><th>Kin.</th><th>DTW</th><th>Div.</th><th>Col. (%)</th></tr></thead>
+<tbody>
+<tr class="grp"><td colspan="9">CAT (ours), 12 evaluations</td></tr>
+<tr><td>SE-ORCA</td><td>0.553</td><td>0.482</td><td>0.359</td><td>0.167</td><td class="u">0.400</td><td>49.27</td><td>0.250</td><td class="b">0.001</td></tr>
+<tr><td>VAE</td><td>0.486</td><td>0.092</td><td>0.074</td><td>0.160</td><td>0.607</td><td>37.68</td><td class="u">0.253</td><td>0.024</td></tr>
+<tr><td>TRACE</td><td class="u">0.422</td><td>0.124</td><td>0.058</td><td class="u">0.148</td><td>0.775</td><td>44.00</td><td>0.229</td><td class="u">0.017</td></tr>
+<tr><td>CrowdES</td><td class="u">0.422</td><td class="u">0.090</td><td class="b">0.040</td><td>0.154</td><td>0.607</td><td class="u">37.48</td><td>0.251</td><td>0.025</td></tr>
+<tr class="ours"><td>ACG (ours)</td><td class="b">0.327</td><td class="b">0.064</td><td class="u">0.057</td><td class="b">0.117</td><td class="b">0.343</td><td class="b">24.62</td><td class="b">0.340</td><td class="b">0.001</td></tr>
+<tr class="grp"><td colspan="9">ETH/UCY, five-scene average</td></tr>
+<tr><td>SE-ORCA</td><td>0.130</td><td>0.086</td><td>0.086</td><td>0.670</td><td>0.495</td><td>1.310</td><td>0.243</td><td class="u">0.025</td></tr>
+<tr><td>VAE</td><td>0.132</td><td>0.086</td><td>0.086</td><td>0.670</td><td>0.690</td><td>1.676</td><td>0.274</td><td>1.737</td></tr>
+<tr><td>TRACE†</td><td>0.089</td><td class="u">0.053</td><td class="u">0.053</td><td>0.315</td><td>1.095</td><td>0.988</td><td class="b">0.310</td><td>1.221</td></tr>
+<tr><td>CrowdES</td><td class="u">0.081</td><td class="u">0.053</td><td class="u">0.053</td><td class="u">0.283</td><td class="b">0.337</td><td class="u">0.933</td><td>0.289</td><td>0.916</td></tr>
+<tr class="ours"><td>ACG (ours)</td><td class="b">0.057</td><td class="b">0.031</td><td class="b">0.031</td><td class="b">0.191</td><td class="u">0.418</td><td class="b">0.912</td><td class="u">0.299</td><td class="b">0.005</td></tr>
+<tr class="grp"><td colspan="9">SDD</td></tr>
+<tr><td>SE-ORCA</td><td>0.058</td><td>0.047</td><td class="u">0.044</td><td>0.540</td><td>0.893</td><td>6.645</td><td>0.377</td><td class="u">0.048</td></tr>
+<tr><td>VAE</td><td>0.052</td><td>0.052</td><td>0.047</td><td>0.678</td><td>1.078</td><td>7.881</td><td class="b">0.387</td><td>2.470</td></tr>
+<tr><td>TRACE†</td><td>0.044</td><td class="b">0.031</td><td class="b">0.030</td><td class="b">0.430</td><td>0.909</td><td class="b">5.519</td><td>0.346</td><td>0.161</td></tr>
+<tr><td>CrowdES</td><td class="b">0.038</td><td class="u">0.033</td><td class="b">0.030</td><td>0.463</td><td class="u">0.650</td><td>6.352</td><td>0.354</td><td>0.411</td></tr>
+<tr class="ours"><td>ACG (ours)</td><td class="u">0.040</td><td class="b">0.031</td><td class="b">0.030</td><td class="u">0.459</td><td class="b">0.631</td><td class="u">5.845</td><td class="u">0.380</td><td class="b">0.000</td></tr>
+<tr class="grp"><td colspan="9">GCS†</td></tr>
+<tr><td>SE-ORCA</td><td>1.099</td><td>0.195</td><td>0.195</td><td>2.539</td><td>1.088</td><td>3.212</td><td>0.244</td><td class="b">0.002</td></tr>
+<tr><td>VAE</td><td>0.978</td><td>0.376</td><td>0.376</td><td>2.259</td><td>1.040</td><td>3.836</td><td>0.319</td><td>10.624</td></tr>
+<tr><td>TRACE</td><td>0.686</td><td>0.341</td><td>0.341</td><td>1.584</td><td class="u">0.401</td><td class="b">2.483</td><td class="b">0.334</td><td>3.492</td></tr>
+<tr><td>CrowdES</td><td class="u">0.332</td><td class="u">0.121</td><td class="u">0.121</td><td class="u">0.768</td><td>1.192</td><td>5.064</td><td>0.316</td><td>10.279</td></tr>
+<tr class="ours"><td>ACG (ours)</td><td class="b">0.328</td><td class="b">0.115</td><td class="b">0.115</td><td class="b">0.757</td><td class="b">0.393</td><td class="u">2.825</td><td class="u">0.320</td><td class="u">2.672</td></tr>
+</tbody></table></div>
+      <p class="tnote">Scene-level realism (density, frequency, coverage, population) and agent-level similarity (kinematics, DTW, diversity, collision rate) following CrowdES; lower is better except diversity. CAT is evaluated with two-fold temporal cross-validation on six scenes; ETH/UCY is averaged over five scenes; † marks reimplemented baselines, and GCS uses a common test split built for this study. Best and second-best per column are bold and underlined.</p>
+    </div>
+    <div class="tables">
+      <div class="tscroll"><table>
+<thead><tr><th>Attribute fidelity on CAT</th><th>Real</th><th>CrowdES</th><th>ACG (ours)</th><th>Real</th><th>CrowdES</th><th>ACG (ours)</th></tr>
+<tr><th></th><th colspan="3" class="c">Agent proportion</th><th colspan="3" class="c">Mean speed (m/s)</th></tr></thead>
+<tbody>
+<tr><td>Adult</td><td class="real">0.938</td><td>0.972</td><td class="b">0.942</td><td class="real">0.88</td><td>0.98</td><td class="b">0.94</td></tr>
+<tr><td>Child</td><td class="real">0.154</td><td>0.097</td><td class="b">0.133</td><td class="real">0.58</td><td>0.82</td><td class="b">0.79</td></tr>
+<tr><td>Personal mobility</td><td class="real">0.045</td><td>0.026</td><td class="b">0.050</td><td class="real">2.23</td><td>0.39</td><td class="b">2.06</td></tr>
+<tr><td>Dependent mobility</td><td class="real">0.017</td><td>0.002</td><td class="b">0.007</td><td class="real">0.69</td><td>0.21</td><td class="b">0.87</td></tr>
+<tr><td>Accompanying children</td><td class="real">0.099</td><td>0.022</td><td class="b">0.057</td><td class="real">0.62</td><td>0.90</td><td class="b">0.82</td></tr>
+<tr><td>Phone use</td><td class="real">0.119</td><td>0.092</td><td class="b">0.125</td><td class="real">0.83</td><td>1.22</td><td class="b">1.15</td></tr>
+</tbody></table></div>
+      <p class="tnote">Proportions and mean speeds pooled over the twelve CAT evaluations. Bold marks the smaller absolute error against the real crowd; ACG is closer in all twelve comparisons. CrowdES moves personal-mobility riders at 0.39 m/s, ACG at 2.06 m/s against 2.23 m/s in the data. Removing the scene cross-attention raises the frequency error from 0.064 to 0.079; removing the social attention raises the kinematic error and DTW (Table 6 of the paper).</p>
+    </div>
+  </section>
+
+  <section id="video">
+    <div class="intro">
+      <div class="head"><div class="eyebrow">Video</div><h2>Full demonstration</h2></div>
+    </div>
+    <div class="deck">
+      <div class="vbox">
+        <video id="full" src="n/demo.mp4" poster="n/demo.jpg" controls playsinline preload="none"></video>
+      </div>
+      <p class="cap"><b>1 min 19 s.</b> Building CAT, scene-specific crowd composition, motion by pedestrian attribute, and robot navigation policies trained on generated crowds. ACG generates attributes and trajectories only; characters, walking animations and body poses are not part of this work.</p>
+    </div>
+  </section>
+
+  <footer>
+    <p>CAT is built from PANDA video sequences with faces de-identified, obtained through the GigaMOT Challenge; ground reference points for the homographies come from Google Earth imagery. Generated crowds are rendered in CARLA and visualise simulated trajectories, not footage of real people.</p>
+  </footer>
+</div>
+
+<script>
+(function () {
+  const $ = (s, r) => (r || document).querySelector(s);
+
+  // size each video box to its clip once the metadata arrives
+  const fit = (v) => v.addEventListener('loadedmetadata', () => { if (v.videoWidth) v.style.setProperty('--ar', `${v.videoWidth} / ${v.videoHeight}`); });
+  document.querySelectorAll('video').forEach(fit);
+
+  const tag = (t) => t ? t.replace(' · ', '<i> · ') + (t.includes(' · ') ? '</i>' : '') : '';
+
+  // one player = category buttons + scene thumbnails + a video (tags only where a clip carries no labels of its own)
+  function player(id, cats) {
+    const root = $(id), v = $('video', root), seg = $('.seg', root), box = $('.scenes', root), vbox = $('.vbox', root);
+    const cap = $('.cap', root.parentElement);
+    const st = { cat: cats[0].id, i: 0 };
+    cats.forEach((c) => {
+      const b = document.createElement('button');
+      b.type = 'button'; b.dataset.c = c.id;
+      b.innerHTML = `${c.name}${c.note ? `<small>${c.note}</small>` : ''}`;
+      b.addEventListener('click', () => { st.cat = c.id; st.i = 0; render(); });
+      seg.appendChild(b);
+    });
+    function render() {
+      const cat = cats.find((c) => c.id === st.cat), sc = cat.scenes[st.i];
+      seg.querySelectorAll('button').forEach((b) => b.setAttribute('aria-pressed', String(b.dataset.c === st.cat)));
+      box.textContent = '';
+      box.style.setProperty('--n', String(Math.max(3, cat.scenes.length)));
+      cat.scenes.forEach((s, i) => {
+        const b = document.createElement('button');
+        b.type = 'button';
+        b.setAttribute('aria-pressed', String(i === st.i));
+        b.innerHTML = `<img alt="" loading="lazy" src="n/${s.v}_t.jpg"><span>${s.s}</span>`;
+        b.addEventListener('click', () => { st.i = i; render(); });
+        box.appendChild(b);
+      });
+      const file = `n/${sc.v}.mp4`;
+      if (!v.src.endsWith(file)) { v.poster = `n/${sc.v}.jpg`; v.src = file; v.play().catch(() => {}); }
+      vbox.className = 'vbox ' + (cat.cls || '');
+      $('.tag.l', vbox).innerHTML = tag(cat.l);
+      $('.tag.r', vbox).innerHTML = tag(cat.r);
+      cap.innerHTML = `<b>${sc.s}.</b> ${sc.c}`;
+    }
+    render();
+  }
+
+  player('#p1', [
+    { id: 'cmp', name: 'Crowd composition', note: 'real crowd vs. ACG crowd', cls: 'cmp', scenes: [
+      { v: 'cmp_school', s: 'Children walk with adults near the school entrance', c: 'Primary School. The bars give the attribute shares of each crowd: children make up 55% of the real crowd and 57% of the ACG crowd, adults accompanying a child 22% and 19%.' },
+      { v: 'cmp_plaza', s: 'A diverse crowd gathers in the plaza', c: 'OCT Harbour. Adults, children, families, personal-mobility riders and phone users mix in the plaza, and ACG reproduces the mix from the scene map alone.' },
+      { v: 'cmp_canteen', s: 'Adults dominate the canteen crowd', c: 'University Canteen. The real crowd is mostly adults with some phone users and riders and no children, and so is the generated one.' } ] },
+    { id: 'mot', name: 'Motion by attribute', note: 'CrowdES vs. ACG', cls: 'mot', scenes: [
+      { v: 'mot_pm', s: 'Personal mobility', c: 'Xili Crossroad. CrowdES moves the rider at walking pace (0.9 m/s); ACG rides at 2.6 m/s, close to the 2.85 m/s measured in CAT.' },
+      { v: 'mot_child', s: 'Children', c: 'Primary School. ACG children walk about 20% slower than the adults around them (16% slower in CAT); CrowdES keeps every age at the same pace.' },
+      { v: 'mot_phone', s: 'Phone users', c: 'Huaqiangbei. The ACG phone user pauses for about 5 s (median stop 7.6 s in CAT); the CrowdES pedestrian never stops.' } ] },
+  ]);
+
+  // pause the looping clips while the full video plays
+  const full = $('#full');
+  full.addEventListener('play', () => document.querySelectorAll('video[loop]').forEach((x) => x.pause()));
+  full.addEventListener('pause', () => document.querySelectorAll('video[loop]').forEach((x) => x.play().catch(() => {})));
+})();
+</script>
