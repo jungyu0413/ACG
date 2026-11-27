@@ -15,7 +15,9 @@ Crowds differ from place to place, and behavior differs from person to person. F
 
 The paper is under review; the preprint will be linked here when it is available. This repository contains the code, the ETH/UCY and CAT (PANDA) data and the project page (`docs/`, served at https://jungyu0413.github.io/ACG/). In the code and the data folder the CAT dataset appears under its source name, PANDA: the `panda` profile and the `p01` … `p10` folds are the six CAT scenes.
 
-# Code: ACG generates crowd scenarios from a scene map: who appears where, with which attributes, where they go and how
+## Code
+
+ACG generates crowd scenarios from a scene map: who appears where, with which attributes, where they go and how
 they move. One shared U-Net encoder feeds an emitter (spawn maps + attribute head), a goal head and a velocity head
 (the simulator); all are trained jointly in a single stage with a trajectory discriminator. Attributes (life stage,
 mobility, constraint, attention) condition the emitter, the goals, the social attention and the motion.
