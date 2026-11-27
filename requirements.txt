@@ -1,0 +1,15 @@
+# ACG (python 3.12; install torch for your CUDA version first, e.g.
+#   pip install torch==2.11.0 --index-url https://download.pytorch.org/whl/cu128)
+torch==2.11.0
+numpy==2.5.2
+pandas==3.0.6
+scipy==1.18.1
+pillow==12.3.0
+pykalman==0.11.2
+POT==0.9.7.post1
+dtaidistance==2.5.1
+joblib==1.6.0
+tqdm==4.70.1
+pyyaml==6.0.3                      # tools/import_crowdes.py only
+opencv-python-headless==4.12.0.88  # tools/build_panda_benchmark.py only
+# tools/export_population_prior.py additionally needs the CrowdES repository and transformers==4.44.2

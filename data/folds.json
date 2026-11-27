@@ -1,0 +1,256 @@
+{
+ "eth": {
+  "dataset": "ethucy",
+  "test": [
+   "seq_eth"
+  ],
+  "train": [
+   "crowds_zara01",
+   "crowds_zara02",
+   "crowds_zara03",
+   "seq_hotel",
+   "students001",
+   "students003"
+  ]
+ },
+ "hotel": {
+  "dataset": "ethucy",
+  "test": [
+   "seq_hotel"
+  ],
+  "train": [
+   "crowds_zara01",
+   "crowds_zara02",
+   "crowds_zara03",
+   "seq_eth",
+   "students001",
+   "students003"
+  ]
+ },
+ "univ": {
+  "dataset": "ethucy",
+  "test": [
+   "students001",
+   "students003"
+  ],
+  "train": [
+   "crowds_zara01",
+   "crowds_zara02",
+   "crowds_zara03",
+   "seq_eth",
+   "seq_hotel"
+  ]
+ },
+ "zara1": {
+  "dataset": "ethucy",
+  "test": [
+   "crowds_zara01"
+  ],
+  "train": [
+   "crowds_zara02",
+   "crowds_zara03",
+   "seq_eth",
+   "seq_hotel",
+   "students001",
+   "students003"
+  ]
+ },
+ "zara2": {
+  "dataset": "ethucy",
+  "test": [
+   "crowds_zara02"
+  ],
+  "train": [
+   "crowds_zara01",
+   "crowds_zara03",
+   "seq_eth",
+   "seq_hotel",
+   "students001",
+   "students003"
+  ]
+ },
+ "sdd": {
+  "dataset": "sdd",
+  "test": [
+   "coupa_0",
+   "coupa_1",
+   "gates_2",
+   "hyang_0",
+   "hyang_1",
+   "hyang_3",
+   "hyang_8",
+   "little_0",
+   "little_1",
+   "little_2",
+   "little_3",
+   "nexus_5",
+   "nexus_6",
+   "quad_0",
+   "quad_1",
+   "quad_2",
+   "quad_3"
+  ],
+  "train": [
+   "bookstore_0",
+   "bookstore_1",
+   "bookstore_2",
+   "bookstore_3",
+   "bookstore_4",
+   "bookstore_5",
+   "bookstore_6",
+   "coupa_2",
+   "coupa_3",
+   "deathCircle_0",
+   "deathCircle_1",
+   "deathCircle_2",
+   "deathCircle_3",
+   "deathCircle_4",
+   "gates_0",
+   "gates_1",
+   "gates_3",
+   "gates_4",
+   "gates_5",
+   "gates_6",
+   "gates_7",
+   "gates_8",
+   "hyang_10",
+   "hyang_11",
+   "hyang_12",
+   "hyang_13",
+   "hyang_14",
+   "hyang_2",
+   "hyang_4",
+   "hyang_5",
+   "hyang_6",
+   "hyang_7",
+   "hyang_9",
+   "nexus_0",
+   "nexus_10",
+   "nexus_11",
+   "nexus_1",
+   "nexus_2",
+   "nexus_3",
+   "nexus_4",
+   "nexus_7",
+   "nexus_8",
+   "nexus_9"
+  ]
+ },
+ "gcs": {
+  "dataset": "gcs",
+  "test": [
+   "terminal/test"
+  ],
+  "train": [
+   "terminal/train"
+  ]
+ },
+ "p01A": {
+  "dataset": "panda",
+  "test": [
+   "p01/1"
+  ],
+  "train": [
+   "p01/0"
+  ]
+ },
+ "p01B": {
+  "dataset": "panda",
+  "test": [
+   "p01/0"
+  ],
+  "train": [
+   "p01/1"
+  ]
+ },
+ "p02A": {
+  "dataset": "panda",
+  "test": [
+   "p02/1"
+  ],
+  "train": [
+   "p02/0"
+  ]
+ },
+ "p02B": {
+  "dataset": "panda",
+  "test": [
+   "p02/0"
+  ],
+  "train": [
+   "p02/1"
+  ]
+ },
+ "p03A": {
+  "dataset": "panda",
+  "test": [
+   "p03/1"
+  ],
+  "train": [
+   "p03/0"
+  ]
+ },
+ "p03B": {
+  "dataset": "panda",
+  "test": [
+   "p03/0"
+  ],
+  "train": [
+   "p03/1"
+  ]
+ },
+ "p04A": {
+  "dataset": "panda",
+  "test": [
+   "p04/1"
+  ],
+  "train": [
+   "p04/0"
+  ]
+ },
+ "p04B": {
+  "dataset": "panda",
+  "test": [
+   "p04/0"
+  ],
+  "train": [
+   "p04/1"
+  ]
+ },
+ "p07A": {
+  "dataset": "panda",
+  "test": [
+   "p07/1"
+  ],
+  "train": [
+   "p07/0"
+  ]
+ },
+ "p07B": {
+  "dataset": "panda",
+  "test": [
+   "p07/0"
+  ],
+  "train": [
+   "p07/1"
+  ]
+ },
+ "p10A": {
+  "dataset": "panda",
+  "test": [
+   "p10/1"
+  ],
+  "train": [
+   "p10/0"
+  ]
+ },
+ "p10B": {
+  "dataset": "panda",
+  "test": [
+   "p10/0"
+  ],
+  "train": [
+   "p10/1"
+  ]
+ }
+}

@@ -1,0 +1,22 @@
+__pycache__/
+*.pyc
+weights/
+outputs/
+data/priors/*/
+!data/priors/population/
+!data/priors/entry/
+# SDD and GCS scenes are built from the CrowdES release (tools/import_crowdes.py); ETH/UCY and PANDA are shipped
+data/scenes/*/
+!data/scenes/seq_eth/
+!data/scenes/seq_hotel/
+!data/scenes/students001/
+!data/scenes/students003/
+!data/scenes/crowds_zara01/
+!data/scenes/crowds_zara02/
+!data/scenes/crowds_zara03/
+!data/scenes/p01/
+!data/scenes/p02/
+!data/scenes/p03/
+!data/scenes/p04/
+!data/scenes/p07/
+!data/scenes/p10/
